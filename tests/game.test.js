@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-const { game, newGame  } = require("../scripts/game");
+const { game, newGame , addTurn, lightsOn, showTurns } = require("../scripts/game");
 
 
 beforeAll(() => {
@@ -16,6 +16,9 @@ beforeAll(() => {
 describe("game object contains correct keys", () => {
     test("score key exists", () => {
         expect("score" in game).toBe(true);
+    });
+    test("turnNumber key exists", () => {
+        expect("turnNumber" in game).toBe(true);
     });
     test("currentGame key exists", () => {
         expect("currentGame" in game).toBe(true);
@@ -39,6 +42,7 @@ describe("newGame works correctly", () => {
         document.getElementById("score").innerText = "42";
         newGame();
     });
+
     test("should set game score to zero", () => {
         expect(game.score).toEqual(0);
     });
@@ -48,7 +52,36 @@ describe("newGame works correctly", () => {
     test("should clear the player moves array", () => {
         expect(game.playerMoves.length).toBe(0);
     });
-    test("should clear the computer sequence array", () => {
-        expect(game.currentGame.length).toBe(0);
+    test("should add one move to the computer's game array", () => {
+        expect(game.currentGame.length).toBe(1);
+    });
+});
+
+describe("gameplay works correctly", () => {
+    beforeEach(() => {
+        game.score = 0;
+        game.currentGame = [];
+        game.playerMoves = [];
+        addTurn();
+    });
+    afterEach(() => {
+        game.score = 0;
+        game.currentGame = [];
+        game.playerMoves = [];
+    });
+    test("addTurn adds a new turn to the game", () => {
+        addTurn();
+        expect(game.currentGame.length).toBe(2);
+    });
+    test("should add correct class to light up the buttons", () => {
+        let button = document.getElementById(game.currentGame[0]);
+        lightsOn(game.currentGame[0]);
+        // expect(button.classList).toContain(game.currentGame[0] + "light");
+        expect(button.classList).toContain( "light");
+    });
+    test("showTurns should update game.turnNumber", () => {
+        game.turnNumber = 42;
+        showTurns();
+        expect(game.turnNumber).toBe(0);
     });
 });
